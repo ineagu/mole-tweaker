@@ -98,8 +98,9 @@
     try {
       // Parse Optimole URL structure
       // Format: https://subdomain.i.optimole.com/params/original-url
+      // The original URL always starts with http:// or https://
       
-      const optimoleMatch = url.match(/^(https?:\/\/[^\/]+\.i\.optimole\.com\/)([^\/]*\/)(.+)$/);
+      const optimoleMatch = url.match(/^(https?:\/\/[^\/]+\.i\.optimole\.com\/)(.*?)(https?:\/\/.+)$/);
       if (!optimoleMatch) {
         return url; // Not a valid Optimole URL
       }
@@ -163,7 +164,7 @@
     }
     
     // Remove trailing slash and split by /
-    const paramParts = paramsSection.replace(/\/$/, '').split('/');
+    const paramParts = paramsSection.replace(/\/$/, '').split('/').filter(part => part.length > 0);
     
     paramParts.forEach(part => {
       if (part.includes(':')) {
