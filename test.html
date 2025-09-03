@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimole Test Page - Mole Tweaker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-image {
+            max-width: 300px;
+            margin: 10px;
+            border: 1px solid #ccc;
+        }
+        .url-display {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        .add-image-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mole Tweaker Test Page</h1>
+    <p>This page contains various Optimole images to test the Mole Tweaker extension.</p>
+    
+    <div class="test-section">
+        <h2>Static Optimole Images</h2>
+        <p>These images are loaded with the page and should be processed by the extension when enabled.</p>
+        
+        <div>
+            <h3>Image 1: High quality with AVIF</h3>
+            <div class="url-display">
+                https://mlmn3tzhtmqy.i.optimole.com/w:551/h:426/q:mauto/ig:avif/https://via.placeholder.com/551x426/007bff/ffffff?text=Test+Image+1
+            </div>
+            <img class="test-image" 
+                 src="https://mlmn3tzhtmqy.i.optimole.com/w:551/h:426/q:mauto/ig:avif/https://via.placeholder.com/551x426/007bff/ffffff?text=Test+Image+1" 
+                 alt="Test Image 1">
+        </div>
+        
+        <div>
+            <h3>Image 2: With DPR and format</h3>
+            <div class="url-display">
+                https://subdomain.i.optimole.com/w:400/h:300/q:80/dpr:2/f:auto/ig:webp/https://via.placeholder.com/400x300/28a745/ffffff?text=Test+Image+2
+            </div>
+            <img class="test-image" 
+                 src="https://subdomain.i.optimole.com/w:400/h:300/q:80/dpr:2/f:auto/ig:webp/https://via.placeholder.com/400x300/28a745/ffffff?text=Test+Image+2" 
+                 alt="Test Image 2">
+        </div>
+        
+        <div>
+            <h3>Image 3: Complex parameters</h3>
+            <div class="url-display">
+                https://example.i.optimole.com/w:600/h:400/q:90/dpr:1/f:best/ig:avif/https://via.placeholder.com/600x400/dc3545/ffffff?text=Test+Image+3
+            </div>
+            <img class="test-image" 
+                 src="https://example.i.optimole.com/w:600/h:400/q:90/dpr:1/f:best/ig:avif/https://via.placeholder.com/600x400/dc3545/ffffff?text=Test+Image+3" 
+                 alt="Test Image 3">
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Dynamic Image Loading</h2>
+        <p>Click the button below to add more Optimole images dynamically. These should also be processed by the extension.</p>
+        
+        <button class="add-image-btn" onclick="addDynamicImage()">Add Dynamic Image</button>
+        <div id="dynamic-images"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Non-Optimole Images</h2>
+        <p>These images should NOT be processed by the extension.</p>
+        
+        <img class="test-image" 
+             src="https://via.placeholder.com/300x200/6c757d/ffffff?text=Regular+Image" 
+             alt="Regular Image">
+        
+        <img class="test-image" 
+             src="https://picsum.photos/300/200" 
+             alt="Random Image">
+    </div>
+    
+    <div class="test-section">
+        <h2>Instructions</h2>
+        <ol>
+            <li>Install the Mole Tweaker extension in developer mode</li>
+            <li>Open this test page</li>
+            <li>Click the extension icon in your browser toolbar</li>
+            <li>Toggle "Enable for this page" to ON</li>
+            <li>Adjust the parameters (quality, format, etc.)</li>
+            <li>Click "Apply Changes"</li>
+            <li>Check the browser's developer tools (Network tab) to see the modified URLs being requested</li>
+            <li>You can also inspect the img elements to see the modified src attributes</li>
+        </ol>
+        
+        <h3>Expected Behavior:</h3>
+        <ul>
+            <li>Only Optimole URLs (containing .i.optimole.com) should be modified</li>
+            <li>Regular images should remain unchanged</li>
+            <li>Modified images should have a data-mole-tweaker-modified="true" attribute</li>
+            <li>When you disable the extension, original URLs should be restored</li>
+            <li>Settings should persist when you reload the page</li>
+        </ul>
+    </div>
+
+    <script>
+        let imageCounter = 1;
+        
+        function addDynamicImage() {
+            const container = document.getElementById('dynamic-images');
+            const imageDiv = document.createElement('div');
+            imageDiv.style.marginTop = '20px';
+            
+            const url = `https://dynamic${imageCounter}.i.optimole.com/w:350/h:250/q:mauto/ig:avif/https://via.placeholder.com/350x250/ffc107/000000?text=Dynamic+Image+${imageCounter}`;
+            
+            imageDiv.innerHTML = `
+                <h4>Dynamic Image ${imageCounter}</h4>
+                <div class="url-display">${url}</div>
+                <img class="test-image" src="${url}" alt="Dynamic Image ${imageCounter}">
+            `;
+            
+            container.appendChild(imageDiv);
+            imageCounter++;
+        }
+        
+        // Add some debugging helpers
+        window.moleTweakerDebug = {
+            showModifiedImages: function() {
+                const modified = document.querySelectorAll('img[data-mole-tweaker-modified="true"]');
+                console.log('Modified images:', modified);
+                return modified;
+            },
+            showOriginalSources: function() {
+                if (window.moleTweakerOriginalSources) {
+                    console.log('Original sources map:', window.moleTweakerOriginalSources);
+                } else {
+                    console.log('No original sources found');
+                }
+            }
+        };
+        
+        console.log('Mole Tweaker test page loaded. Use moleTweakerDebug.showModifiedImages() to inspect modified images.');
+    </script>
+</body>
+</html>
