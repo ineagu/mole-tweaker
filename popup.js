@@ -13,20 +13,23 @@ document.addEventListener('DOMContentLoaded', function() {
   loadSettings();
 
   // Event listeners
-  enableToggle.addEventListener('change', function() {
-    saveSettings();
-    updateContentScript();
+  enableToggle.addEventListener('change', async function() {
+    await saveSettings();
+    await updateContentScript();
+    await reloadCurrentTab();
   });
 
-  applyBtn.addEventListener('click', function() {
-    saveSettings();
-    updateContentScript();
+  applyBtn.addEventListener('click', async function() {
+    await saveSettings();
+    await updateContentScript();
     showStatus('Settings applied successfully!', 'success');
+    await reloadCurrentTab();
   });
 
-  resetBtn.addEventListener('click', function() {
-    resetSettings();
+  resetBtn.addEventListener('click', async function() {
+    await resetSettings();
     showStatus('Settings reset to defaults', 'success');
+    await reloadCurrentTab();
   });
 
   // Load settings from storage
@@ -128,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const settings = result[`settings_${domain}`] || {};
 
       // Send message to content script
-      chrome.tabs.sendMessage(tabId, {
+      await chrome.tabs.sendMessage(tabId, {
         action: 'updateSettings',
         enabled: isEnabled,
         settings: settings
@@ -137,6 +140,16 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
       console.error('Error updating content script:', error);
       showStatus('Error applying changes', 'error');
+    }
+  }
+
+  // Reload current tab
+  async function reloadCurrentTab() {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      await chrome.tabs.reload(tab.id);
+    } catch (error) {
+      console.error('Error reloading tab:', error);
     }
   }
 

@@ -9,6 +9,7 @@ A Chrome extension that allows you to modify Optimole image URL parameters for b
 - **Format Control**: Set format parameter (f) to "best" or remove it entirely
 - **Image Format**: Remove image format conversion (ig parameter) like "avif"
 - **Device Pixel Ratio**: Control DPR (dpr parameter) - set to 1x, 2x, 3x, or remove
+- **Responsive & Lazy-load aware**: Modifies `src`, `srcset`, `<source srcset>`, `data-src`, `data-srcset`, and inline `background-image` URLs; observes attribute changes for lazy-loaded content
 
 ## How it works
 
@@ -55,10 +56,10 @@ The extension remembers your settings for each website domain, so you don't need
 ## Technical Details
 
 - Uses Chrome Extension Manifest V3
-- Content script processes images on page load and watches for dynamically added images
+- Content script processes images, sources, and background images on page load; watches for dynamically added nodes and attribute changes (`src`, `srcset`, `data-src`, `data-srcset`, `style`)
 - Settings are stored locally using Chrome's storage API
 - Non-invasive: only modifies Optimole URLs, leaves other images unchanged
-- Restores original URLs when disabled
+- Restores original attributes/styles when disabled
 
 ## Development
 
